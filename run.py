@@ -309,15 +309,13 @@ def dmain(major_ticker):
                 i = i + 1
                 if keyboard.is_pressed("p"):
                     print("You pressed p")
-                    restart = input("다시시작하려면 yes 를 입력하세요 : ")
-
-                    while restart != "yes" or restart != "end":
+                    
+                    while True:
                         restart = input("다시시작하려면 yes 를 입력하세요 : ")
+                        if restart == "yes":
+                            break
                         if restart == "end":
                             return
-
-                    if restart == "end":
-                        return
 
                 time.sleep(1)
 
