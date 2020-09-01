@@ -8,7 +8,7 @@ import datetime
 # 판매 실시간     : 장대음봉, 익절, 손절 판매
 
 # major_ticker = ["BTC", "LINK", "XRP", "ETH", "EOS", "BCH", "TRX", "BSV", "LTC", "ETC", "XLM", "QTUM", "ADA"]
-major_ticker = ["XRP", "TRX"]
+major_ticker = ["TRX", "ETH"]
 ticker = "BTC"
 
 # 상수
@@ -110,9 +110,7 @@ def sell_crypto_currency(ticker):
 
 # 초기화, 초기 설정(실행시 한번)
 now = datetime.datetime.now()
-# mid = datetime.datetime(now.year, now.month, now.day) + datetime.timedelta(1)
-mid = datetime.datetime(now.year, now.month, now.day, now.hour, now.minute) + datetime.timedelta(minutes=1)
-print(mid)
+mid = datetime.datetime(now.year, now.month, now.day) + datetime.timedelta(1)
 count = 0
 current_price = {}
 real_buy_current = {}
@@ -150,7 +148,7 @@ for ticker in major_ticker:
 for ticker in major_ticker:
     df = pybithumb.get_candlestick(ticker)
     current_price[ticker] = pybithumb.get_current_price(ticker)
-    real_buy_current[ticker] = 0
+    real_buy_current[ticker] = current_price[ticker]
     beneath[ticker] = False
     stop_loss[ticker] = False
 
@@ -207,7 +205,7 @@ while True:
             # 자정이 넘어가면 정보 최신화, 조건 만족시 구매 or 판매(하루 한번)
             if mid < now < mid + datetime.timedelta(seconds=20):
                 # 차트 받아옴(하루 한번)
-                df = pybithumb.get_candlestick(ticker, chart_instervals="10m")
+                df = pybithumb.get_candlestick(ticker)
 
                 # 각종 이동평균(하루 한번)
                 yes_ma5 = get_yesterday_ma5(-2)
@@ -235,7 +233,7 @@ while True:
                 # 골든크로스, 아래로 볼록 구매(하루 한번)
                 if wallet_bull[ticker] and (golden_cross[ticker] or convex_down[ticker]):
                     real_buy_current[ticker] = buy_crypto_currency(ticker)
-                    print(ticker, real_buy_current[ticker], "구매")
+                    print(ticker, real_buy_current[ticker], "골든크로스, 아래로 볼록 구매")
                     print(now)
 
                 # 판매 가능한지 수량 판별(하루 한번)
@@ -249,13 +247,11 @@ while True:
                 if unit_c[ticker] and (dead_cross[ticker] or convex_up[ticker] or cross[ticker]):
                     sell_crypto_currency(ticker)
                     real_sell_current = pybithumb.get_current_price(ticker)
-                    print(ticker, real_sell_current, "판매")
+                    print(ticker, real_sell_current, "데드크로스 ,위로볼록 ,십자가 판매")
                     print(now)
 
                 # 자정 업데이트(하루 한번)
-                # mid = datetime.datetime(now.year, now.month, now.day) + datetime.timedelta(1)
-                mid = datetime.datetime(mid.year, mid.month, mid.day, mid.hour, mid.minute) + datetime.timedelta(minutes=10)
-                print(mid)
+                mid = datetime.datetime(now.year, now.month, now.day) + datetime.timedelta(1)
 
             # 장대양봉, 장대음봉(실시간)
             jang_dae_plus = abs(current_price[ticker] - to_open) > to_open * jang_plus_cnst
@@ -268,7 +264,7 @@ while True:
             # 장대양봉 구매(실시간)
             if wallet_bull[ticker] and jang_dae_plus_volume[ticker]:
                 real_buy_current[ticker] = buy_crypto_currency(ticker)
-                print(ticker, real_buy_current[ticker], "구매")
+                print(ticker, real_buy_current[ticker], "장대양봉 구매")
                 print(now)
 
             # 익절(실시간)
@@ -293,7 +289,7 @@ while True:
             # 장대음봉, 익절, 손절 판매(실시간)
             if unit_c[ticker] and (jang_dae_minus_volume[ticker] or beneath[ticker] or stop_loss[ticker]):
                 real_sell_current = sell_crypto_currency(ticker)
-                print(ticker, real_sell_current, "판매")
+                print(ticker, real_sell_current, "장대음봉, 익절, 손절 판매")
                 print(now)
 
         except:
