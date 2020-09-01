@@ -7,8 +7,8 @@ import datetime
 # 판매 하루 한번  : 데드크로스, 위로볼록, 십자가 판매
 # 판매 실시간     : 장대음봉, 익절, 손절 판매
 
-# major_ticker = ["BTC", "LINK", "XRP", "ETH", "EOS", "BCH", "TRX", "BSV", "LTC", "ETC", "XLM", "QTUM", "ADA"]
-major_ticker = ["TRX", "ETH"]
+major_ticker = ["BTC", "LINK", "XRP", "ETH", "EOS", "BCH", "TRX", "BSV", "LTC", "ETC", "XLM", "QTUM", "ADA"]
+
 ticker = "BTC"
 
 # 상수
